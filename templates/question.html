@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Question{% endblock %}
+
+{% block content %}
+<div class="mt-5 d-flex justify-content-center"></div>
+  <div class="card mx-auto w-50">
+    <h5 class="card-header">Satisfaction Survey</h5>
+    <div class="card-body">
+      <h5 class="card-title">Question {{question_number}}</h5>
+      <form method="POST">
+        <p class="card-text mb-3">{{question}}</p>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="form" id="yes" checked>
+          <label class="form-check-label" for="yes">
+            Yes
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="form" id="no">
+          <label class="form-check-label" for="no">
+            No
+          </label>
+        </div>
+      </form>
+      <a href="/questions/{{question_number}}" class="btn btn-primary mt-5">Next Question</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
