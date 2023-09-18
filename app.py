@@ -9,19 +9,24 @@ app = Flask(__name__)
 
 
 # needed for the debugger 
-# app.config['SECRET_KEY'] = "I love kitties"
+app.config['SECRET_KEY'] = "I love kitties"
 # debug = DebugToolbarExtension(app)
 # app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 
 
 # empty list to capture survey answers
-responses = []
+RESPONSES_KEY = 'responses'
 
 # root page
 @app.route('/')
 def home_page():
   return render_template('index.html', survey=survey)
+
+@app.route('/begin', methods=['POST'])
+def start_survey():
+   session[RESPONSES_KEY] = []
+   return redirect('/questions/0')
 
 @app.route("/answer", methods=["POST"])
 def handle_question():
@@ -31,7 +36,9 @@ def handle_question():
     get_choice = request.form['answer']
 
     # add this response to the session
+    responses = session[RESPONSES_KEY]
     responses.append(get_choice)
+    session[RESPONSES_KEY] = responses
     print(responses)
 
     if (len(responses) == len(survey.questions)):
@@ -43,6 +50,7 @@ def handle_question():
 
 @app.route('/questions/<int:q_id>')
 def question_page(q_id):
+  responses = session.get(RESPONSES_KEY)
   # empty list for the questions from the survey object 
   questions = []
 
@@ -75,7 +83,7 @@ def question_page(q_id):
   
   # if q_num is not a valid question index or the thank you page conditional, go to error page 
   else:
-    return redirect('/404')
+    return redirect('/404.html')
   
 @app.route('/404')
 def error_page():
@@ -83,4 +91,4 @@ def error_page():
 
 @app.route('/thank-you')
 def thank_you_page():
-  return render_template('thank-you.html', responses=responses)
+  return render_template('thank-you.html')
